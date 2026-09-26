@@ -1,0 +1,93 @@
+{
+    "inputs": [],
+    "contexts": [
+        "I was charged twice for my subscription this month. Please refund the extra charge.",
+        "The export button has thrown an error for three days and our whole finance team is blocked. Fix it today.",
+        "Hi! Could you tell me what the Pro plan costs for five people?"
+    ],
+    "layers": [
+        [
+            {
+                "name": "team",
+                "preset": "choice",
+                "reads": [
+                    "context"
+                ],
+                "instructions": "Which team should handle this ticket?",
+                "options": {
+                    "billing": "Payments, charges and refunds",
+                    "bugs": "Something in the product is broken",
+                    "sales": "Buying, plans and pricing",
+                    "other": "Anything else"
+                }
+            },
+            {
+                "name": "severity",
+                "preset": "score",
+                "reads": [
+                    "context"
+                ],
+                "instructions": "How much harm is the problem in this ticket doing?",
+                "levels": [
+                    "None",
+                    "A little",
+                    "Some",
+                    "A lot",
+                    "It stops the customer working"
+                ]
+            },
+            {
+                "name": "angry",
+                "preset": "custom",
+                "reads": [
+                    "context"
+                ],
+                "instructions": "Is the customer angry or out of patience?",
+                "yes": "",
+                "no": ""
+            }
+        ],
+        [
+            {
+                "name": "serious",
+                "preset": "sum",
+                "reads": [
+                    "severity.3",
+                    "severity.4"
+                ]
+            },
+            {
+                "name": "owed",
+                "preset": "sum",
+                "reads": [
+                    "team.billing",
+                    "team.bugs"
+                ]
+            }
+        ],
+        [
+            {
+                "name": "senior",
+                "preset": "custom",
+                "reads": [
+                    "context",
+                    "team",
+                    "serious"
+                ],
+                "instructions": "The ticket is for the team named, and serious is the chance its problem is serious. Should someone senior reply today?",
+                "yes": "",
+                "no": ""
+            }
+        ],
+        [
+            {
+                "name": "escalate",
+                "preset": "all",
+                "reads": [
+                    "senior",
+                    "owed"
+                ]
+            }
+        ]
+    ]
+}

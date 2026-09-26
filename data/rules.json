@@ -1,0 +1,32 @@
+{
+    "all": {
+        "label": "all of",
+        "glyph": "all",
+        "describe": "The lowest of {list}, so over 0.5 only where each is"
+    },
+    "any": {
+        "label": "any of",
+        "glyph": "any",
+        "describe": "The highest of {list}, so over 0.5 where at least one is"
+    },
+    "sum": {
+        "label": "sum of",
+        "glyph": "sum",
+        "describe": "The sum of {list}, at most 1: the chance one is true, where no two can be"
+    },
+    "none": {
+        "label": "none of",
+        "glyph": "none",
+        "describe": "1 minus the highest of {list}, so over 0.5 only where none is"
+    },
+    "atLeast": {
+        "label": "at least n of",
+        "glyph": "≥{n}",
+        "describe": "The value {n} down from the highest of {list}, so over 0.5 where at least {n} are"
+    },
+    "average": {
+        "label": "weighted average",
+        "glyph": "avg",
+        "describe": "The average of {list}, weighted {weights}"
+    }
+}

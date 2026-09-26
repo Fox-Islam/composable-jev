@@ -1,0 +1,50 @@
+{
+    "buffer": {
+        "arity": 1,
+        "instructions": "Is {x} greater than 0.5?",
+        "yes": "{x} is greater than 0.5.",
+        "no": "{x} is 0.5 or less."
+    },
+    "not": {
+        "arity": 1,
+        "instructions": "Is {x} 0.5 or less?",
+        "yes": "{x} is 0.5 or less.",
+        "no": "{x} is greater than 0.5."
+    },
+    "and": {
+        "arity": 2,
+        "instructions": "Are {list} {both} greater than 0.5?",
+        "yes": "{list} are each greater than 0.5.",
+        "no": "At least one of {list} is 0.5 or less."
+    },
+    "or": {
+        "arity": 2,
+        "instructions": "Is at least one of {list} greater than 0.5?",
+        "yes": "At least one of {list} is greater than 0.5.",
+        "no": "{list} are each 0.5 or less."
+    },
+    "nand": {
+        "arity": 2,
+        "instructions": "Is at least one of {list} 0.5 or less?",
+        "yes": "At least one of {list} is 0.5 or less.",
+        "no": "{list} are each greater than 0.5."
+    },
+    "nor": {
+        "arity": 2,
+        "instructions": "Are {list} {both} 0.5 or less?",
+        "yes": "{list} are each 0.5 or less.",
+        "no": "At least one of {list} is greater than 0.5."
+    },
+    "xor": {
+        "arity": 2,
+        "instructions": "Is an odd number of {list} greater than 0.5?",
+        "yes": "The count of {list} greater than 0.5 is odd.",
+        "no": "The count of {list} greater than 0.5 is even, or zero."
+    },
+    "majority": {
+        "arity": 2,
+        "instructions": "Are more than half of {list} greater than 0.5?",
+        "yes": "More than half of {list} are greater than 0.5.",
+        "no": "Half or fewer of {list} are greater than 0.5."
+    }
+}

@@ -1,0 +1,182 @@
+{
+  "xor": {
+    "about": "The function one perceptron cannot compute, from two layers.",
+    "graph": {
+      "inputs": ["a", "b"],
+      "layers": [
+        [
+          {"name": "nand", "preset": "nand", "reads": ["a", "b"]},
+          {"name": "or", "preset": "or", "reads": ["a", "b"]}
+        ],
+        [
+          {"name": "xor", "preset": "and", "reads": ["or", "nand"]}
+        ]
+      ]
+    }
+  },
+  "half-adder": {
+    "about": "xor for the sum bit, and an and for the carry.",
+    "graph": {
+      "inputs": ["a", "b"],
+      "layers": [
+        [
+          {"name": "carry", "preset": "and", "reads": ["a", "b"]},
+          {"name": "nand", "preset": "nand", "reads": ["a", "b"]},
+          {"name": "or", "preset": "or", "reads": ["a", "b"]}
+        ],
+        [
+          {"name": "xor", "preset": "and", "reads": ["or", "nand"]}
+        ]
+      ]
+    }
+  },
+  "4-bit adder": {
+    "about": "A ripple-carry adder of a and b into s, least significant bit first. Each bit is two nodes: the sum is xor of a, b and the carry in, and the carry out is their majority, the last carry being the top bit of the sum. The sum row is drawn the other way from the carries, so it reads most significant bit first.",
+    "starts": {"a0": 1, "b0": 1, "a1": 1, "b1": 0, "a2": 1, "b2": 1, "a3": 0, "b3": 0},
+    "graph": {
+      "inputs": ["a0", "a1", "a2", "a3", "b0", "b1", "b2", "b3"],
+      "layers": [
+        [
+          {"name": "c1", "preset": "and", "reads": ["a0", "b0"]},
+          {"name": "s3", "preset": "xor", "reads": ["a3", "b3", "c3"]}
+        ],
+        [
+          {"name": "c2", "preset": "majority", "reads": ["a1", "b1", "c1"]},
+          {"name": "s2", "preset": "xor", "reads": ["a2", "b2", "c2"]}
+        ],
+        [
+          {"name": "c3", "preset": "majority", "reads": ["a2", "b2", "c2"]},
+          {"name": "s1", "preset": "xor", "reads": ["a1", "b1", "c1"]}
+        ],
+        [
+          {"name": "s4", "preset": "majority", "reads": ["a3", "b3", "c3"]},
+          {"name": "s0", "preset": "xor", "reads": ["a0", "b0"]}
+        ]
+      ]
+    }
+  },
+  "8-bit adder": {
+    "about": "The 4-bit adder twice over. Its truth table has 65,536 rows, so it is off.",
+    "truthTable": false,
+    "starts": {"a0": 0, "b0": 1, "a1": 0, "b1": 1, "a2": 1, "b2": 1, "a3": 0, "b3": 0, "a4": 0, "b4": 1, "a5": 1, "b5": 1, "a6": 1, "b6": 0, "a7": 0, "b7": 0},
+    "graph": {
+      "inputs": ["a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7"],
+      "layers": [
+        [
+          {"name": "c1", "preset": "and", "reads": ["a0", "b0"]},
+          {"name": "s7", "preset": "xor", "reads": ["a7", "b7", "c7"]}
+        ],
+        [
+          {"name": "c2", "preset": "majority", "reads": ["a1", "b1", "c1"]},
+          {"name": "s6", "preset": "xor", "reads": ["a6", "b6", "c6"]}
+        ],
+        [
+          {"name": "c3", "preset": "majority", "reads": ["a2", "b2", "c2"]},
+          {"name": "s5", "preset": "xor", "reads": ["a5", "b5", "c5"]}
+        ],
+        [
+          {"name": "c4", "preset": "majority", "reads": ["a3", "b3", "c3"]},
+          {"name": "s4", "preset": "xor", "reads": ["a4", "b4", "c4"]}
+        ],
+        [
+          {"name": "c5", "preset": "majority", "reads": ["a4", "b4", "c4"]},
+          {"name": "s3", "preset": "xor", "reads": ["a3", "b3", "c3"]}
+        ],
+        [
+          {"name": "c6", "preset": "majority", "reads": ["a5", "b5", "c5"]},
+          {"name": "s2", "preset": "xor", "reads": ["a2", "b2", "c2"]}
+        ],
+        [
+          {"name": "c7", "preset": "majority", "reads": ["a6", "b6", "c6"]},
+          {"name": "s1", "preset": "xor", "reads": ["a1", "b1", "c1"]}
+        ],
+        [
+          {"name": "s8", "preset": "majority", "reads": ["a7", "b7", "c7"]},
+          {"name": "s0", "preset": "xor", "reads": ["a0", "b0"]}
+        ]
+      ]
+    }
+  },
+  "sr latch": {
+    "about": "Two nors reading each other: s sets q, r resets it, and with both off q holds whatever it was. Setting takes two ticks, one trip round the loop each.",
+    "starts": {"s": 1, "r": 0},
+    "graph": {
+      "inputs": ["s", "r"],
+      "layers": [
+        [
+          {"name": "q", "preset": "nor", "reads": ["r", "qbar"], "start": 0.0},
+          {"name": "qbar", "preset": "nor", "reads": ["s", "q"], "start": 1.0}
+        ]
+      ]
+    }
+  },
+  "ticket triage": {
+    "about": "Three judgements Jev makes about a support ticket, combined in code into whether to escalate it. The tickets are made up.",
+    "graph": {
+      "inputs": [],
+      "contexts": [
+        "I was charged twice for my subscription this month. Please refund the extra charge.",
+        "This is the third outage this month to take down our 400-seat workspace. Our contract renews next month and I need someone senior on a call today.",
+        "Hi! How do I change the colour of my dashboard? Thanks :)"
+      ],
+      "layers": [
+        [
+          {"name": "enterprise", "preset": "custom", "reads": ["context"], "instructions": "Does the ticket come from a large business account?", "yes": "It mentions a company, a team, many seats or a contract.", "no": "It reads as one person with their own account."},
+          {"name": "angry", "preset": "custom", "reads": ["context"], "instructions": "Is the customer angry or out of patience?", "yes": "The ticket is hostile, exasperated or threatening to leave.", "no": "The ticket is calm or friendly."},
+          {"name": "refund", "preset": "custom", "reads": ["context"], "instructions": "Is the customer asking for money back?", "yes": "The ticket asks for a refund, a credit or a reversed charge.", "no": "It does not ask for money back."}
+        ],
+        [
+          {"name": "either", "preset": "any", "reads": ["refund", "enterprise"]}
+        ],
+        [
+          {"name": "escalate", "preset": "all", "reads": ["angry", "either"]}
+        ]
+      ]
+    }
+  },
+  "delay timer": {
+    "about": "A weighted sum of one signal is a comparison with a rule: on five seconds in.",
+    "graph": {
+      "inputs": [],
+      "time": true,
+      "layers": [
+        [
+          {"name": "on", "preset": "weighted", "reads": ["time"], "weights": [1.0], "bias": 5.0}
+        ]
+      ]
+    }
+  },
+  "555 oscillator": {
+    "about": "A 555 oscillator from what Jev gets right every time: set asks whether time is a multiple of 10 and reset whether it ends in 5, each right 61 of 61 over 0 to 60 sent as whole numbers, and the latch between them holds q on from just after set until reset.",
+    "graph": {
+      "inputs": [],
+      "time": true,
+      "layers": [
+        [
+          {"name": "set", "preset": "custom", "reads": ["time"], "instructions": "Is time a multiple of 10?", "yes": "time is a whole multiple of 10, such as 0, 10 or 20.", "no": "time is not a multiple of 10."},
+          {"name": "reset", "preset": "custom", "reads": ["time"], "instructions": "Does time end in the digit 5?", "yes": "The last digit of time is 5.", "no": "The last digit of time is not 5."}
+        ],
+        [
+          {"name": "q", "preset": "nor", "reads": ["reset", "qbar"], "start": 0.0},
+          {"name": "qbar", "preset": "nor", "reads": ["set", "q"], "start": 1.0}
+        ]
+      ]
+    }
+  },
+  "decay": {
+    "about": "A trigger charges cap; hold is cap leaking, a light left on 9 times in 10 each tick; cap is at least one of the trigger and hold, so it runs down a tick at a time once the trigger is off. Both questions ask about an event whose chance is the number they read, which is what makes Jev answer with a level and not an on or off. Measured: out stays on 4 or 5 ticks after a trigger, and cap rests near 0.43.",
+    "starts": {"trigger": 1},
+    "graph": {
+      "inputs": ["trigger"],
+      "layers": [
+        [
+          {"name": "cap", "preset": "custom", "reads": ["trigger", "hold"], "instructions": "trigger and hold are the chances of two independent events. Does at least one of the two events happen?", "yes": "At least one of the events happens.", "no": "Neither event happens."},
+          {"name": "hold", "preset": "custom", "reads": ["cap"], "instructions": "A light was on a second ago with probability cap. A light that was on stays on for another second 9 times in 10, and otherwise goes off. Is the light on now?", "yes": "The light is on.", "no": "The light is off.", "start": 0.0}
+        ],
+        [
+          {"name": "out", "preset": "buffer", "reads": ["cap"]}
+        ]
+      ]
+    }
+  }
+}

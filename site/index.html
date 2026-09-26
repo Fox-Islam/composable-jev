@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>composable-jev</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><nav><a href="#quick-start">Quick start</a><a href="#running-a-graph">Running a graph</a><a href="#rules">Rules</a><a href="#choices-and-scores">Choices and scores</a><a href="#gates-asked-of-jev">Gates asked of Jev</a><a href="#asking-jev">Asking Jev</a><a href="#development">Development</a></nav></header>
+<main>
+<div class="title-row"><h1 id="composable-jev">composable-jev</h1><a class="gh" href="https://github.com/Fox-Islam/composable-jev" aria-label="composable-jev on GitHub"><svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a></div>
+<p>A library to chain Jev calls, for the deranged and enlightened</p>
+<h2 id="quick-start">Quick start</h2>
+<div class="scroll"><table>
+<thead>
+<tr>
+<th></th>
+<th>install</th>
+<th>needs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PHP</td>
+<td><code>composer require phox/composable-jev</code></td>
+<td>PHP 8.3+</td>
+</tr>
+<tr>
+<td>JavaScript</td>
+<td><code>npm install @phox-js/composable-jev</code></td>
+<td>Node 22+</td>
+</tr>
+<tr>
+<td>Python</td>
+<td><code>pip install composable-jev</code></td>
+<td>Python 3.10+</td>
+</tr>
+</tbody>
+</table></div>
+<pre><code class="language-php">// PHP
+use Phox\ComposableJev\Graph;
+use Phox\ComposableJev\Oracle\Jev;
+
+$triage = Graph::make('I was charged twice this month. This is the third time. Refund me now.')
+    -&gt;ask('refund', 'Is the customer asking for money back?', Graph::CONTEXT)
+    -&gt;ask('angry', 'Is the customer angry or out of patience?', Graph::CONTEXT)
+    -&gt;all('escalate', 'refund', 'angry');
+
+$triage-&gt;run(Jev::make())-&gt;yes('escalate');                      // true
+</code></pre>
+<pre><code class="language-ts">// JavaScript
+import { Graph, Jev } from '@phox-js/composable-jev';
+
+const triage = Graph.make('I was charged twice this month. This is the third time. Refund me now.')
+    .ask('refund', 'Is the customer asking for money back?', Graph.CONTEXT)
+    .ask('angry', 'Is the customer angry or out of patience?', Graph.CONTEXT)
+    .all('escalate', 'refund', 'angry');
+
+(await triage.run(Jev.make())).yes('escalate');                   // true
+</code></pre>
+<pre><code class="language-python"># Python
+from composable_jev import Graph, Jev
+
+triage = (Graph.make('I was charged twice this month. This is the third time. Refund me now.')
+    .ask('refund', 'Is the customer asking for money back?', Graph.CONTEXT)
+    .ask('angry', 'Is the customer angry or out of patience?', Graph.CONTEXT)
+    .all('escalate', 'refund', 'angry'))
+
+triage.run(Jev.make()).yes('escalate')                            # True
+</code></pre>
+<p><code>Jev::make()</code> is the TypeSafe SDK's client in each language, reading <code>TYPESAFE_API_KEY</code>; a key
+passed to it is used instead.</p>
+<h2 id="running-a-graph">Running a graph</h2>
+<ul>
+<li><strong><code>make($context)</code></strong> or <strong><code>context()</code></strong> sets what the questions are about, text, 
+or a JSON object or array.</li>
+<li><strong><code>run()</code></strong> settles the graph once from its starting values.</li>
+<li><strong><code>truthTable()</code></strong> runs every combination of the on/off inputs, and every context, each from
+the start.</li>
+<li>There's a lot of other weird stuff too but idk you can figure it out when you use it</li>
+</ul>
+<h2 id="rules">Rules</h2>
+<p>Rules compare and evaluate the outputs of Jev queries </p>
+<div class="scroll"><table>
+<thead>
+<tr>
+<th></th>
+<th>works out</th>
+<th>over 0.5 where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>all('step_label', 'input_a', 'input_b')</code></td>
+<td>the lowest</td>
+<td>each is</td>
+</tr>
+<tr>
+<td><code>any('step_label', 'input_a', 'input_b')</code></td>
+<td>the highest</td>
+<td>at least one is</td>
+</tr>
+<tr>
+<td><code>sum('step_label', 'team.billing', 'team.bugs')</code></td>
+<td>the sum, at most 1</td>
+<td>one is, where no two can be: options, levels</td>
+</tr>
+<tr>
+<td><code>none('step_label', 'input_a', 'input_b')</code></td>
+<td>1 minus the highest</td>
+<td>none is: not over one signal, nor over more</td>
+</tr>
+<tr>
+<td><code>atLeast('step_label', 2, 'input_a', 'input_b', 'input_c')</code></td>
+<td>the value 2 down from the highest</td>
+<td>at least 2 are</td>
+</tr>
+<tr>
+<td><code>average('step_label', ['input_a' =&gt; 3, 'input_b' =&gt; 1])</code></td>
+<td>the weighted average</td>
+<td>the weighted average is</td>
+</tr>
+<tr>
+<td><code>rule('step_label', fn (array $s) =&gt; ..., 'input_a', 'input_b')</code></td>
+<td>your function, 0 to 1</td>
+<td>-</td>
+</tr>
+</tbody>
+</table></div>
+<p>Each gives a probability, not a yes or no, so a question after it sees how sure the answers
+were. A <code>rule()</code> is a custom function. </p>
+<h2 id="choices-and-scores">Choices and scores</h2>
+<p>A node can ask Jev any of its primitives. A choice's value is the option Jev picked and a score's
+the score it gave, which is what a later question reads; the probability of each option or level
+is a part of the node, <code>team.billing</code> or <code>severity.3</code>, which is what code reads:</p>
+<pre><code class="language-php">Graph::make('The export button has thrown an error for three days. Fix it today.')
+    -&gt;choose('team', 'Which team should handle this ticket?', Graph::CONTEXT, [
+        'billing' =&gt; 'Payments, charges and refunds',
+        'bugs' =&gt; 'Something in the product is broken',
+        'other' =&gt; 'Anything else',
+    ])
+    -&gt;score('severity', 'How much harm is the problem doing?', Graph::CONTEXT,
+        ['None', 'A little', 'Some', 'A lot', 'It stops the customer working'])
+    -&gt;sum('serious', 'severity.3', 'severity.4')
+    -&gt;ask('senior', 'The ticket is for the team named, and serious is the chance its problem is '
+        . 'serious. Should someone senior reply today?', [Graph::CONTEXT, 'team', 'serious']);
+</code></pre>
+<p><code>team</code>, <code>severity</code> and the questions beside them go to Jev in one request; <code>senior</code> reads the
+ticket, the team picked and a rule's answer, in a second. <code>$row-&gt;choice('team')</code> is the option
+picked and <code>$row-&gt;probabilities('team')</code> each option's chance. A rule cannot read <code>team</code>, which
+is a word; it reads <code>team.billing</code>.</p>
+<h2 id="gates-asked-of-jev">Gates asked of Jev</h2>
+<p>Jev can do the logic too: a graph of gates asked of Jev computes, remembers and keeps time (poorly). 
+For real work a rule is always better, but it's pretty fun to use Jev to do it</p>
+<p>Two nors reading each other make a latch: <code>s</code> sets <code>q</code>, <code>r</code> resets it, and with both off <code>q</code>
+holds whatever it was.</p>
+<pre><code class="language-php">$latch = Graph::make()
+    -&gt;input('s', 'r')
+    -&gt;gate('q', 'nor', 'r', 'qbar')
+    -&gt;gate('qbar', 'nor', 's', 'q')
+    -&gt;startsAt('q', 0.0)
+    -&gt;startsAt('qbar', 1.0)
+    -&gt;ticker(Jev::make());
+
+$latch-&gt;tick(['s' =&gt; 1]);
+$latch-&gt;tick(['s' =&gt; 1]);          // a loop goes round once a tick, so setting takes two
+$latch-&gt;tick()-&gt;yes('q');          // true: q holds with s off
+$latch-&gt;tick(['r' =&gt; 1])-&gt;yes('q'); // false
+</code></pre>
+<p>The gates are <code>buffer</code>, <code>not</code>, <code>and</code>, <code>or</code>, <code>nand</code>, <code>nor</code>, <code>xor</code> and <code>majority</code>, over any number of
+signals where it makes sense; each asks about the signals by name (&quot;Are <code>input_a</code> and <code>input_b</code> both greater
+than 0.5?&quot; is what's used for an AND gate, for example)</p>
+<h2 id="asking-jev">Asking Jev</h2>
+<p><code>Jev</code> batches: a level's nodes go in one request, their inputs merged into one state, so the fixed
+part of a call is paid once a level instead of once a node. Over the adders, xor, half-adder and
+ticket triage, with every node asked of Jev, batched and separate answers fell on the same side of
+0.5 for 2,722 of 2,731 nodes, batched was right as often or more, and it used 26 to 39% fewer
+tokens in about half the requests. <code>Jev::make($key, batch: false)</code> asks each node on its own.</p>
+<p>A float is sent with its decimal (<code>1.0</code>) and a whole second without (<code>32</code>): asked whether an odd
+number of (1, 1, 0.96) is above 0.5, Jev answered 0.50 to 0.58 with the ones sent as <code>1</code> and
+0.55 to 0.66 as <code>1.0</code>. JavaScript has one number type, so its <code>Jev</code> writes floats with
+<code>JSON.rawJSON</code>, which is why it needs Node 22.</p>
+<p>Answers are cached by request body in the cache directory. The key is the same in all three
+languages, so they can share one.</p>
+<p><code>Jev</code> calls TypeSafe through each language's SDK:
+<a href="https://github.com/Fox-Islam/typesafe-sdk-php"><code>phox/typesafe-sdk-php</code></a>,
+<a href="https://www.npmjs.com/package/@typesafe-ai/sdk"><code>@typesafe-ai/sdk</code></a> and
+<a href="https://pypi.org/project/typesafe-sdk/"><code>typesafe-sdk</code></a>. <code>new Jev($client)</code> takes a client you
+have set up yourself, for its provider, timeout or retries.</p>
+<p><code>Simulator</code> answers every node from its rule, for free, and cannot answer a question of your own.</p>
+<h2 id="development">Development</h2>
+<pre><code class="language-bash">composer install &amp;&amp; composer test &amp;&amp; composer lint
+npm install &amp;&amp; npm test
+uv sync &amp;&amp; uv run pytest &amp;&amp; uv run ruff check python
+</code></pre>
+<p>Tests run offline, against a fake TypeSafe in each language.</p>
+<p><code>spec/fixtures.json</code> is what the PHP implementation gives for a set of runs, with every request
+body the fake was sent, and for the rules, plans and numbers under them. <code>composer fixtures</code>
+writes it, the JavaScript and Python tests hold theirs to it, and a PHP test fails when it is out
+of date.</p>
+<p><code>site/index.html</code> is this README as a page, published by <code>.github/workflows/pages.yml</code> on every push
+to <code>main</code>. <code>python3 bin/site.py</code> writes it again, and a Python test fails when it is out of date.</p>
+</main>
+<footer><p>Jev questions composed into graphs, in PHP, JavaScript and Python. <a href="https://github.com/Fox-Islam/composable-jev">Source on GitHub</a>.</p></footer>
+</body>
+</html>

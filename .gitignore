@@ -1,0 +1,10 @@
+/vendor/
+/.phpunit.cache/
+/.jev-cache/
+.env
+/node_modules/
+/js/dist/
+/.venv/
+__pycache__/
+/.pytest_cache/
+/.ruff_cache/

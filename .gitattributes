@@ -1,0 +1,24 @@
+# LF everywhere: Pint and PSR-12 expect it, and a checkout with core.autocrlf would write CRLF.
+* text=auto eol=lf
+
+# What Composer's download of the package leaves out: the PHP library needs php/src and data/.
+/.github export-ignore
+/bin export-ignore
+/js export-ignore
+/local export-ignore
+/php/bin export-ignore
+/php/tests export-ignore
+/python export-ignore
+/site export-ignore
+/spec export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/CLAUDE.md export-ignore
+/composer.lock export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/phpunit.xml export-ignore
+/pint.json export-ignore
+/pyproject.toml export-ignore
+/tsconfig.json export-ignore
+/uv.lock export-ignore

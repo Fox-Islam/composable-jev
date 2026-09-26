@@ -1,0 +1,46 @@
+{
+  "name": "@phox-js/composable-jev",
+  "version": "1.0.0",
+  "description": "A library to chain Jev calls, for the deranged and enlightened",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "typesafe",
+    "jev",
+    "system-one",
+    "llm",
+    "graph",
+    "chaining"
+  ],
+  "author": "Fox Islam <foxislam@outlook.com>",
+  "main": "./js/dist/src/index.js",
+  "types": "./js/dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./js/dist/src/index.d.ts",
+      "default": "./js/dist/src/index.js"
+    }
+  },
+  "files": [
+    "js/dist/src",
+    "data",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test \"js/dist/test/**/*.test.js\"",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@typesafe-ai/sdk": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  }
+}
